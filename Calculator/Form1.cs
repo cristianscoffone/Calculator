@@ -18,6 +18,7 @@ namespace Calculator
            Operator,
            DecimalPoint,
            PlusMinusSign,
+           Backspace,
            Undefined
         }
         public struct BtnStruct
@@ -38,7 +39,7 @@ namespace Calculator
 
         private BtnStruct[,] buttons =
         {
-            { new BtnStruct('%'), new BtnStruct('\u0152'), new BtnStruct('C'), new BtnStruct('\u232B') },
+            { new BtnStruct('%'), new BtnStruct('\u0152'), new BtnStruct('C'), new BtnStruct('\u232B',SymbolType.Backspace) },
             {new BtnStruct('\u215F'), new BtnStruct('\u00B2'), new BtnStruct('\u221A'), new BtnStruct('\u00F7') },
             { new BtnStruct('7',SymbolType.Number,true), new BtnStruct('8',SymbolType.Number,true), new BtnStruct('9',SymbolType.Number,true), new BtnStruct('\u00D7',SymbolType.Operator)},
             {new BtnStruct('4',SymbolType.Number,true), new BtnStruct('5',SymbolType.Number,true), new BtnStruct('6',SymbolType.Number,true), new BtnStruct('-',SymbolType.Operator) },
@@ -120,6 +121,13 @@ namespace Calculator
                             lbl_result.Text = lbl_result.Text.Substring(1);
                         }
                        
+                    }
+                    break;
+                case SymbolType.Backspace:
+                    lbl_result.Text = lbl_result.Text.Substring(0,lbl_result.Text.Length - 1);
+                    if (lbl_result.Text.Length == 0 || lbl_result.Text=="-0")
+                    {
+                        lbl_result.Text = "0";
                     }
                     break;
                 case SymbolType.Undefined:
