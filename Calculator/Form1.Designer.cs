@@ -28,13 +28,48 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.lbl_result = new System.Windows.Forms.Label();
+            this.panelTop = new System.Windows.Forms.Panel();
+            this.SuspendLayout();
+            // 
+            // lbl_result
+            // 
+            this.lbl_result.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lbl_result.Font = new System.Drawing.Font("Segoe UI Semibold", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_result.Location = new System.Drawing.Point(0, 32);
+            this.lbl_result.Name = "lbl_result";
+            this.lbl_result.Size = new System.Drawing.Size(322, 69);
+            this.lbl_result.TabIndex = 2;
+            this.lbl_result.Text = "0";
+            this.lbl_result.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // panelTop
+            // 
+            this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelTop.Location = new System.Drawing.Point(0, 0);
+            this.panelTop.Name = "panelTop";
+            this.panelTop.Size = new System.Drawing.Size(322, 32);
+            this.panelTop.TabIndex = 3;
+            // 
+            // Form1
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "Form1";
+            this.ClientSize = new System.Drawing.Size(322, 476);
+            this.Controls.Add(this.lbl_result);
+            this.Controls.Add(this.panelTop);
+            this.MaximizeBox = false;
+            this.Name = "Form1";
+            this.Text = "Calcolatrice";
+            this.Load += new System.EventHandler(this.Form1_Load);
+            this.ResumeLayout(false);
+
         }
 
         #endregion
+
+        private System.Windows.Forms.Label lbl_result;
+        private System.Windows.Forms.Panel panelTop;
     }
 }
 
