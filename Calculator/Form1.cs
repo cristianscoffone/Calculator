@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,14 +47,25 @@ namespace Calculator
             {new BtnStruct('1',SymbolType.Number,true), new BtnStruct('2',SymbolType.Number,true), new BtnStruct('3',SymbolType.Number,true), new BtnStruct('+',SymbolType.Operator) },
             {new BtnStruct('\u00B1',SymbolType.PlusMinusSign), new BtnStruct('0',SymbolType.Number,true), new BtnStruct(',',SymbolType.DecimalPoint), new BtnStruct('=',SymbolType.Operator) },
         };
+
+        float lblResultBaseFontSize;
+        const int lblResultWidthMargin = 24;
+        const int lblResultMaxDigit = 25;
+
+        char lastOperator = ' '; 
+        decimal operand1,operand2,result;
+        BtnStruct lastButtonClicked;
+
         public Form1()
         {
             InitializeComponent();
+            lblResultBaseFontSize = lbl_result.Font.Size;
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             MakeButtons(buttons.GetLength(0), buttons.GetLength(1));
+
         }
 
         private void MakeButtons(int rows, int cols)
@@ -94,7 +106,7 @@ namespace Calculator
             switch (clickedButtonStruct.type)
             {
                 case SymbolType.Number:
-                    if (lbl_result.Text == "0")
+                    if (lbl_result.Text == "0" || lastButtonClicked.type==SymbolType.Operator)
                     {
                         lbl_result.Text = "";
                     
@@ -102,6 +114,7 @@ namespace Calculator
                     lbl_result.Text += clickedButton.Text;
                     break;
                 case SymbolType.Operator:
+                    ManageOperator(clickedButtonStruct);
                     break;
                 case SymbolType.DecimalPoint:
                     if (lbl_result.Text.IndexOf(",") == -1)
@@ -135,25 +148,77 @@ namespace Calculator
                 default:
                     break;
             }
+            lastButtonClicked=clickedButtonStruct;
+        }
 
+        private void ManageOperator(BtnStruct clickedButtonStruct)
+        {
+            if (lastOperator==' ')
+            {
+                operand1 = decimal.Parse(lbl_result.Text);
+                lastOperator= clickedButtonStruct.Content;
+
+            }
+            else
+            {
+                operand2 = decimal.Parse(lbl_result.Text);
+                switch (lastOperator)
+                {
+                    case '+':
+                        result=operand1 + operand2;
+                        break;
+                    case '-':
+
+                        result = operand1 - operand2;
+                        break;
+
+                    case '\u00D7':
+                        result = operand1 * operand2;
+                        break;
+
+                    case '\u00F7':
+                        result = operand1 / operand2;
+                        break;
+                    default:
+                        break;
+                }
+                operand1=result;
+                lastOperator= clickedButtonStruct.Content;
+                lbl_result.Text = result.ToString();
+            }
         }
 
         private void lbl_result_TextChanged(object sender, EventArgs e)
         {
-            if (lbl_result.Text.Length > 16)
+            if (lbl_result.Text == "-")
             {
-                lbl_result.Text = lbl_result.Text.Substring(0, 16);
+                lbl_result.Text = "0";
+                return;
             }
-            
-            if (lbl_result.Text.Length>11)
+            if (lbl_result.Text.Length > 0)
             {
-                float delta=lbl_result.Text.Length-11;
-                lbl_result.Font = new Font("Segoe UI", 36 - delta*(float)2.8,FontStyle.Regular);
+                decimal num = decimal.Parse(lbl_result.Text); string stOut = "";
+                NumberFormatInfo nfi = new CultureInfo("it-IT", false).NumberFormat;
+                int decimalSeparatorPosition = lbl_result.Text.IndexOf(",");
+                nfi.NumberDecimalDigits = decimalSeparatorPosition == -1 ? 0
+                  : lbl_result.Text.Length - decimalSeparatorPosition - 1;
+                stOut = num.ToString("N", nfi);
+                if (lbl_result.Text.IndexOf(",") == lbl_result.Text.Length - 1) stOut += ",";
+                lbl_result.Text = stOut;
+
+
             }
-            else
+
+            if (lbl_result.Text.Length > lblResultMaxDigit)
+                lbl_result.Text = lbl_result.Text.Substring(0, lblResultMaxDigit);
+
+            int textWidth = TextRenderer.MeasureText(lbl_result.Text, lbl_result.Font).Width;
+            float newSize = lbl_result.Font.Size * (((float)lbl_result.Size.Width - lblResultWidthMargin) / textWidth);
+            if (newSize > lblResultBaseFontSize)
             {
-                lbl_result.Font = new Font("Segoe UI", 36, FontStyle.Bold);
+                newSize = lblResultBaseFontSize;
             }
+            lbl_result.Font = new Font("Segoe UI", newSize, FontStyle.Regular);
         }
     }
 }
