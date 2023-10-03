@@ -20,7 +20,8 @@ namespace Calculator
            DecimalPoint,
            PlusMinusSign,
            Backspace,
-           Undefined
+           Undefined,
+                ClearAll
         }
         public struct BtnStruct
         {
@@ -40,8 +41,8 @@ namespace Calculator
 
         private BtnStruct[,] buttons =
         {
-            { new BtnStruct('%'), new BtnStruct('\u0152'), new BtnStruct('C'), new BtnStruct('\u232B',SymbolType.Backspace) },
-            {new BtnStruct('\u215F'), new BtnStruct('\u00B2'), new BtnStruct('\u221A'), new BtnStruct('\u00F7') },
+            { new BtnStruct('%'), new BtnStruct('\u0152'), new BtnStruct('C',SymbolType.ClearAll), new BtnStruct('\u232B',SymbolType.Backspace) },
+            {new BtnStruct('\u215F'), new BtnStruct('\u00B2'), new BtnStruct('\u221A'), new BtnStruct('\u00F7',SymbolType.Operator) },
             { new BtnStruct('7',SymbolType.Number,true), new BtnStruct('8',SymbolType.Number,true), new BtnStruct('9',SymbolType.Number,true), new BtnStruct('\u00D7',SymbolType.Operator)},
             {new BtnStruct('4',SymbolType.Number,true), new BtnStruct('5',SymbolType.Number,true), new BtnStruct('6',SymbolType.Number,true), new BtnStruct('-',SymbolType.Operator) },
             {new BtnStruct('1',SymbolType.Number,true), new BtnStruct('2',SymbolType.Number,true), new BtnStruct('3',SymbolType.Number,true), new BtnStruct('+',SymbolType.Operator) },
@@ -114,7 +115,15 @@ namespace Calculator
                     lbl_result.Text += clickedButton.Text;
                     break;
                 case SymbolType.Operator:
-                    ManageOperator(clickedButtonStruct);
+                    if (lastButtonClicked.type==SymbolType.Operator && lastButtonClicked.Content!='=')
+                    {
+                        lastOperator=clickedButtonStruct.Content;
+                    }
+                    else
+                    {
+
+                        ManageOperator(clickedButtonStruct);
+                    }
                     break;
                 case SymbolType.DecimalPoint:
                     if (lbl_result.Text.IndexOf(",") == -1)
@@ -143,6 +152,10 @@ namespace Calculator
                         lbl_result.Text = "0";
                     }
                     break;
+                case SymbolType.ClearAll:
+                    lbl_result.Text = "0";
+                    result = 0;
+                    break;
                 case SymbolType.Undefined:
                     break;
                 default:
@@ -161,7 +174,11 @@ namespace Calculator
             }
             else
             {
-                operand2 = decimal.Parse(lbl_result.Text);
+                if (lastButtonClicked.Content!='=')
+                {
+
+                    operand2 = decimal.Parse(lbl_result.Text);
+                }
                 switch (lastOperator)
                 {
                     case '+':
@@ -183,7 +200,12 @@ namespace Calculator
                         break;
                 }
                 operand1=result;
-                lastOperator= clickedButtonStruct.Content;
+                if (clickedButtonStruct.Content != '=')
+                {
+
+                    lastOperator = clickedButtonStruct.Content;
+                    operand2 = 0;
+                }
                 lbl_result.Text = result.ToString();
             }
         }
