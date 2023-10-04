@@ -17,11 +17,13 @@ namespace Calculator
         {
            Number,
            Operator,
+           SpecialOoerator,
            DecimalPoint,
            PlusMinusSign,
            Backspace,
            Undefined,
-                ClearAll
+                ClearAll,
+                ClearEntry
         }
         public struct BtnStruct
         {
@@ -42,7 +44,7 @@ namespace Calculator
         private BtnStruct[,] buttons =
         {
             { new BtnStruct('%'), new BtnStruct('\u0152'), new BtnStruct('C',SymbolType.ClearAll), new BtnStruct('\u232B',SymbolType.Backspace) },
-            {new BtnStruct('\u215F'), new BtnStruct('\u00B2'), new BtnStruct('\u221A'), new BtnStruct('\u00F7',SymbolType.Operator) },
+            {new BtnStruct('\u215F',SymbolType.SpecialOoerator), new BtnStruct('\u00B2'), new BtnStruct('\u221A'), new BtnStruct('\u00F7',SymbolType.Operator) },
             { new BtnStruct('7',SymbolType.Number,true), new BtnStruct('8',SymbolType.Number,true), new BtnStruct('9',SymbolType.Number,true), new BtnStruct('\u00D7',SymbolType.Operator)},
             {new BtnStruct('4',SymbolType.Number,true), new BtnStruct('5',SymbolType.Number,true), new BtnStruct('6',SymbolType.Number,true), new BtnStruct('-',SymbolType.Operator) },
             {new BtnStruct('1',SymbolType.Number,true), new BtnStruct('2',SymbolType.Number,true), new BtnStruct('3',SymbolType.Number,true), new BtnStruct('+',SymbolType.Operator) },
@@ -146,46 +148,84 @@ namespace Calculator
                     }
                     break;
                 case SymbolType.Backspace:
-                    lbl_result.Text = lbl_result.Text.Substring(0,lbl_result.Text.Length - 1);
-                    if (lbl_result.Text.Length == 0 || lbl_result.Text=="-0")
+                    if (lastButtonClicked.type != SymbolType.Operator)
                     {
-                        lbl_result.Text = "0";
+                        lbl_result.Text = lbl_result.Text.Substring(0, lbl_result.Text.Length - 1);
+                        if (lbl_result.Text.Length == 0 || lbl_result.Text == "-0" || lbl_result.Text == "-")
+                        {
+                            lbl_result.Text = "0";
+                        }
                     }
                     break;
                 case SymbolType.ClearAll:
-                    lbl_result.Text = "0";
-                    result = 0;
+                    ClearAll();
+
+                    break;
+                case SymbolType.ClearEntry:
+                    if (lastButtonClicked.Content=='=')
+                    {
+                        ClearAll();
+                    }
+                    else
+                    {
+                        lbl_result.Text = "0";
+                    }
                     break;
                 case SymbolType.Undefined:
                     break;
                 default:
                     break;
             }
-            lastButtonClicked=clickedButtonStruct;
+            if (clickedButtonStruct.type != SymbolType.Backspace)
+                lastButtonClicked = clickedButtonStruct;
+
+        }
+
+        private void ClearAll()
+        {
+            
+            result = 0;
+            operand1 = 0;
+            operand2 = 0;
+            lastOperator = ' ';
+            lbl_result.Text = "0";
         }
 
         private void ManageOperator(BtnStruct clickedButtonStruct)
         {
-            if (lastOperator==' ')
+
+            operand2 = decimal.Parse(lbl_result.Text);
+            if (clickedButtonStruct.type == SymbolType.SpecialOoerator)
+            {
+                switch (clickedButtonStruct.Content)
+                {
+
+                    case '\u215F':
+                        result = 1 / operand2;
+                        break;
+
+                    default:
+                        break;
+                }
+                //op1 = result;
+                lbl_result.Text = result.ToString();
+            }
+            if (lastOperator == ' ')
             {
                 operand1 = decimal.Parse(lbl_result.Text);
-                lastOperator= clickedButtonStruct.Content;
-
+                if (clickedButtonStruct.Content != '=') lastOperator = clickedButtonStruct.Content;
             }
             else
             {
-                if (lastButtonClicked.Content!='=')
-                {
-
+                if (lastButtonClicked.Content != '=')
                     operand2 = decimal.Parse(lbl_result.Text);
-                }
                 switch (lastOperator)
                 {
                     case '+':
-                        result=operand1 + operand2;
+                        result = operand1 + operand2;
                         break;
-                    case '-':
 
+                    case '-':
                         result = operand1 - operand2;
                         break;
 
@@ -196,18 +236,19 @@ namespace Calculator
                     case '\u00F7':
                         result = operand1 / operand2;
                         break;
+
                     default:
                         break;
                 }
-                operand1=result;
+                operand1 = result;
                 if (clickedButtonStruct.Content != '=')
                 {
-
                     lastOperator = clickedButtonStruct.Content;
-                    operand2 = 0;
+                    if (lastButtonClicked.Content == '=') operand2 = 0;
                 }
                 lbl_result.Text = result.ToString();
             }
+
         }
 
         private void lbl_result_TextChanged(object sender, EventArgs e)
