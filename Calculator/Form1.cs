@@ -68,6 +68,7 @@ namespace Calculator
         private void Form1_Load(object sender, EventArgs e)
         {
             MakeButtons(buttons.GetLength(0), buttons.GetLength(1));
+            lblCronologi.Text = "";
 
         }
 
@@ -115,6 +116,7 @@ namespace Calculator
                     
                     }
                     lbl_result.Text += clickedButton.Text;
+                    
                     break;
                 case SymbolType.Operator:
                     if (lastButtonClicked.type == SymbolType.Operator && lastButtonClicked.Content != '=')
@@ -123,8 +125,9 @@ namespace Calculator
                     }
                     else
                     {
-
+                        lblCronologi.Text +=lbl_result.Text+  " " + clickedButton.Text;
                         ManageOperator(clickedButtonStruct);
+                      
                     }
                     break;
                 case SymbolType.SpecialOoerator:
@@ -173,6 +176,7 @@ namespace Calculator
                     else
                     {
                         lbl_result.Text = "0";
+                       
                     }
                     break;
                 case SymbolType.Undefined:
@@ -222,6 +226,7 @@ namespace Calculator
             operand2 = 0;
             lastOperator = ' ';
             lbl_result.Text = "0";
+            lblCronologi.Text = "";
         }
 
         private void ManageOperator(BtnStruct clickedButtonStruct)
@@ -239,7 +244,7 @@ namespace Calculator
                 switch (lastOperator)
                 {
                     case '+':
-                        result = operand1 + operand2;
+                        result = operand1 + operand2;                       
                         break;
 
                     case '-':
