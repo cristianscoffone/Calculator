@@ -43,8 +43,8 @@ namespace Calculator
 
         private BtnStruct[,] buttons =
         {
-            { new BtnStruct('%'), new BtnStruct('\u0152'), new BtnStruct('C',SymbolType.ClearAll), new BtnStruct('\u232B',SymbolType.Backspace) },
-            {new BtnStruct('\u215F',SymbolType.SpecialOoerator), new BtnStruct('\u00B2'), new BtnStruct('\u221A'), new BtnStruct('\u00F7',SymbolType.Operator) },
+            { new BtnStruct('%',SymbolType.SpecialOoerator), new BtnStruct('\u0152',SymbolType.ClearEntry), new BtnStruct('C',SymbolType.ClearAll), new BtnStruct('\u232B',SymbolType.Backspace) },
+            {new BtnStruct('\u215F',SymbolType.SpecialOoerator), new BtnStruct('\u00B2',SymbolType.SpecialOoerator), new BtnStruct('\u221A', SymbolType.SpecialOoerator), new BtnStruct('\u00F7',SymbolType.Operator) },
             { new BtnStruct('7',SymbolType.Number,true), new BtnStruct('8',SymbolType.Number,true), new BtnStruct('9',SymbolType.Number,true), new BtnStruct('\u00D7',SymbolType.Operator)},
             {new BtnStruct('4',SymbolType.Number,true), new BtnStruct('5',SymbolType.Number,true), new BtnStruct('6',SymbolType.Number,true), new BtnStruct('-',SymbolType.Operator) },
             {new BtnStruct('1',SymbolType.Number,true), new BtnStruct('2',SymbolType.Number,true), new BtnStruct('3',SymbolType.Number,true), new BtnStruct('+',SymbolType.Operator) },
@@ -117,9 +117,9 @@ namespace Calculator
                     lbl_result.Text += clickedButton.Text;
                     break;
                 case SymbolType.Operator:
-                    if (lastButtonClicked.type==SymbolType.Operator && lastButtonClicked.Content!='=')
+                    if (lastButtonClicked.type == SymbolType.Operator && lastButtonClicked.Content != '=')
                     {
-                        lastOperator=clickedButtonStruct.Content;
+                        lastOperator = clickedButtonStruct.Content;
                     }
                     else
                     {
@@ -127,6 +127,10 @@ namespace Calculator
                         ManageOperator(clickedButtonStruct);
                     }
                     break;
+                case SymbolType.SpecialOoerator:
+                    specialManageOp(clickedButtonStruct);
+                    break;
+                    
                 case SymbolType.DecimalPoint:
                     if (lbl_result.Text.IndexOf(",") == -1)
                     {
@@ -178,7 +182,36 @@ namespace Calculator
             }
             if (clickedButtonStruct.type != SymbolType.Backspace)
                 lastButtonClicked = clickedButtonStruct;
+            
 
+        }
+
+        private void specialManageOp(BtnStruct clickedButtonStruct)
+        {
+
+            operand2 = decimal.Parse(lbl_result.Text);
+           
+                switch (clickedButtonStruct.Content)
+                {
+
+                    case '\u215F':
+                        result = 1 / operand2;
+                        break;
+                    case '%':
+                        result = operand1*operand2 / 100;
+                        break;
+                    case '\u00B2':
+                        result = operand2 * operand2;
+                        break;
+                    case '\u221A':
+                        result = (decimal)Math.Sqrt((double)operand2);
+                        break;
+                    default:
+                        break;
+                }
+                //op1 = result;
+                lbl_result.Text = result.ToString();
+            
         }
 
         private void ClearAll()
@@ -194,22 +227,6 @@ namespace Calculator
         private void ManageOperator(BtnStruct clickedButtonStruct)
         {
 
-            operand2 = decimal.Parse(lbl_result.Text);
-            if (clickedButtonStruct.type == SymbolType.SpecialOoerator)
-            {
-                switch (clickedButtonStruct.Content)
-                {
-
-                    case '\u215F':
-                        result = 1 / operand2;
-                        break;
-
-                    default:
-                        break;
-                }
-                //op1 = result;
-                lbl_result.Text = result.ToString();
-            }
             if (lastOperator == ' ')
             {
                 operand1 = decimal.Parse(lbl_result.Text);
