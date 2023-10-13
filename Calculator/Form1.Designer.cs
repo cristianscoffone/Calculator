@@ -57,13 +57,13 @@
             // 
             // lblCronologi
             // 
-            this.lblCronologi.AutoSize = true;
             this.lblCronologi.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblCronologi.Location = new System.Drawing.Point(231, 0);
+            this.lblCronologi.Location = new System.Drawing.Point(0, 0);
             this.lblCronologi.Name = "lblCronologi";
-            this.lblCronologi.Size = new System.Drawing.Size(32, 24);
+            this.lblCronologi.Size = new System.Drawing.Size(322, 32);
             this.lblCronologi.TabIndex = 0;
             this.lblCronologi.Text = "gg";
+            this.lblCronologi.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // Form1
             // 
@@ -77,7 +77,6 @@
             this.Text = "Calcolatrice";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.panelTop.ResumeLayout(false);
-            this.panelTop.PerformLayout();
             this.ResumeLayout(false);
 
         }
